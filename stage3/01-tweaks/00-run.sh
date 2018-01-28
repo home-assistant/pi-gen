@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 
 on_chroot << EOF
 groupadd -f -r -g 1001 homeassistant
@@ -7,8 +7,6 @@ EOF
 
 on_chroot << EOF
 sdptool add SP
-EOF
-
 git clone https://github.com/Craftama/rpi3-wifi-conf.git /srv/homeassistant/craftbox-wifi-conf
 chmod +x /srv/homeassistant/craftbox-wifi-conf/run.py
 pip3 install wifi
@@ -43,9 +41,12 @@ fi
 exit 0
 EOL
 
+EOF
+
 install -v -o 1001 -g 1001 -d ${ROOTFS_DIR}/srv/homeassistant
-wget -O files/hassbian-scripts-0.4.deb https://github.com/home-assistant/hassbian-scripts/releases/download/v0.6/hassbian-scripts_0.6.deb
-install -v -m 600 files/hassbian-scripts-0.6.deb ${ROOTFS_DIR}/srv/homeassistant/
+mkdir -p files
+wget -O ./files/hassbian-scripts-0.6.deb https://github.com/home-assistant/hassbian-scripts/releases/download/v0.6/hassbian-scripts_0.6.deb
+install -v -m 600 ./files/hassbian-scripts-0.6.deb ${ROOTFS_DIR}/srv/homeassistant/
 
 on_chroot << EOF
 dpkg -i /srv/homeassistant/hassbian-scripts-0.6.deb
