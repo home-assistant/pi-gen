@@ -15,6 +15,12 @@ on_chroot << EOF
 systemctl enable install_homeassistant
 EOF
 
+on_chroot << EOF
+sed -i 's/PrintMotd no/PrintMotd yes/' /etc/ssh/sshd_config
+rm /etc/update-motd.d/10-uname
+rm /etc/motd
+EOF
+
 on_chroot << \EOF
 for GRP in dialout gpio i2c input netdev spi video; do
         adduser homeassistant $GRP
