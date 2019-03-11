@@ -22,13 +22,14 @@ Build instructions:
 
 pi-gen runs on Debian based operating systems. Currently it is only supported on
 either Debian Stretch or Ubuntu Xenial and is known to have issues building on
-earlier releases of these systems.
+earlier releases of these systems. On other Linux distributions it may be possible
+to use the Docker build described below.
 
 To install the required dependencies for pi-gen you should run:
 
 ```bash
-apt-get install quilt parted realpath qemu-user-static debootstrap zerofree pxz zip \
-dosfstools bsdtar libcap2-bin grep rsync xz-utils
+apt-get install coreutils quilt parted qemu-user-static debootstrap zerofree zip \
+dosfstools bsdtar libcap2-bin grep rsync xz-utils file git curl
 ```
 
 The file `depends` contains a list of tools needed.  The format of this
@@ -77,28 +78,57 @@ The following environment variables are supported:
    be built and cached.  Note, `WORK_DIR` stores a complete copy of the target
    system for each build stage, amounting to tens of gigabytes in the case of
    Raspbian.
-   
+
    **CAUTION**: If your working directory is on an NTFS partition you probably won't be able to build. Make sure this is a proper Linux filesystem.
 
  * `DEPLOY_DIR`  (Default: `"$BASE_DIR/deploy"`)
 
    Output directory for target system images and NOOBS bundles.
 
-A simple example for building Hassbian:
 =======
 =======
+ * `DEPLOY_ZIP` (Default: `1`)
+
+   Setting to `0` will deploy the actual image (`.img`) instead of a zipped image (`.zip`).
+
  * `USE_QEMU` (Default: `"0"`)
 
    Setting to '1' enables the QEMU mode - creating an image that can be mounted via QEMU for an emulated
    environment. These images include "-qemu" in the image file name.
 
+ * `FIRST_USER_NAME` (Default: "pi" )
 
-A simple example for building Raspbian:
+   Username for the first user
+
+ * `FIRST_USER_PASS` (Default: "raspberry")
+
+   Password for the first user
+
+ * `WPA_ESSID`, `WPA_PASSWORD` and `WPA_COUNTRY` (Default: unset)
+
+   If these are set, they are use to configure `wpa_supplicant.conf`, so that the raspberry pi can automatically connect to a wifi network on first boot.
+
+ * `ENABLE_SSH` (Default: `0`)
+
+   Setting to `1` will enable ssh server for remote log in. Note that if you are using a common password such as the defaults there is a high risk of attackers taking over you RaspberryPi.
+
+ * `STAGE_LIST` (Default: `stage*`)
+
+    If set, then instead of working through the numeric stages in order, this list will be followed. For example setting to `stage0 stage1 mystage stage2` will run the contents of `mystage` before stage2. An absolute or relative path can be given for stages outside the pi-gen directory.
+
+## A simple example for building Raspbian:
 
 ```bash
 IMG_NAME='Hassbian'
 ```
 
+The config file can also be specified on the command line as an argument the `build.sh` or `build-docker.sh` scripts.
+
+```
+./build.sh -c myconfig
+```
+
+This is parsed after `config` so can be used to override values set there.
 
 ## How the build process works
 
@@ -147,6 +177,13 @@ It is recommended to examine build.sh for finer details.
 
 ## Docker Build
 
+Docker can be used to perform the build inside a container. This partially isolates
+the build from the host system, and allows using the script on non-debian based
+systems (e.g. Fedora Linux). The isolate is not complete due to the need to use
+some kernel level services for arm emulation (binfmt) and loop devices (losetup).
+
+To build:
+
 ```bash
 nano config         # Edit your config file. See above.
 ./build-docker.sh
@@ -160,6 +197,12 @@ continue:
 
 ```bash
 CONTINUE=1 ./build-docker.sh
+```
+
+To examine the container after a failure you can enter a shell within it using:
+
+```bash
+sudo docker run -it --privileged --volumes-from=pigen_work pi-gen /bin/bash
 ```
 
 After successful build, the build container is by default removed. This may be undesired when making incremental changes to a customized build. To prevent the build script from remove the container add
@@ -204,7 +247,7 @@ maintenance and allows for more easy customization.
    defaults, installs fake-hwclock and ntp, wifi and bluetooth support,
    dphys-swapfile, and other basics for managing the hardware.  It also
    creates necessary groups and gives the pi user access to sudo and the
-   standard console hardware permission groups. This stage has a minor 
+   standard console hardware permission groups. This stage has a minor
    modification to prevent ssh from being disabled.
 
    There are a few tools that may not make a whole lot of sense here for
@@ -224,7 +267,7 @@ maintenance and allows for more easy customization.
 
 
 ## Example for building a lite system without Home Assistant
-$ touch ./stage3/SKIP 
+$ touch ./stage3/SKIP
 $ rm stage3/EXPORT*
 $ touch stage3/EXPORT_IMAGE
 ```
@@ -268,3 +311,27 @@ follows:
  * Rebuild just the last stage using ```sudo CLEAN=1 ./build.sh```
  * Once you're happy with the image you can remove the SKIP_IMAGES files and
    export your image to test
+
+# Troubleshooting
+
+## `binfmt_misc`
+
+Linux is able execute binaries from other architectures, meaning that it should be
+possible to make use of `pi-gen` on an x86_64 system, even though it will be running
+ARM binaries. This requires support from the [`binfmt_misc`](https://en.wikipedia.org/wiki/Binfmt_misc)
+kernel module.
+
+You may see the following error:
+
+```
+update-binfmts: warning: Couldn't load the binfmt_misc module.
+```
+
+To resolve this, ensure that the following files are available (install them if necessary):
+
+```
+/lib/modules/$(uname -r)/kernel/fs/binfmt_misc.ko
+/usr/bin/qemu-arm-static
+```
+
+You may also need to load the module by hand - run `modprobe binfmt_misc`.
