@@ -1,4 +1,81 @@
 UNRELEASED:
+  *
+2018-11-13:
+  * Two versions of image created - "base" image has no optional software packages included; "full" image has all optional packages
+    - Removed from "base" image - LibreOffice, Thonny, Scratch, Scratch 2, Sonic Pi, Minecraft, Python Games, SmartSim, SenseHAT Emulator
+    - Added to "full" image - Mathematica, BlueJ, Greenfoot, Node-RED, Claws Mail, VNC Viewer
+  * Python Games and SmartSim added to Recommended Software
+  * VLC media player with VideoCore hardware acceleration included in image
+  * Version 3.0.5 of Thonny included
+  * Modifications to LXDE components to enable local configuration to override global configuration correctly
+  * Modifications to Appearance Settings to support above configuration changes
+  * Modifications to various initial config defaults and relevant package to support above configuration changes
+  * Selecting default option in Appearance Settings now deletes relevant local configuration files
+  * PiX theme modified so that all changes made in Appearance Settings are in override files rather than in theme files
+  * Design of scrollbar buttons changed
+  * Image Viewer moved into Graphics category on main menu
+  * Recommended Software now installs LibreOffice language support files if needed, and suggests reboot if needed
+  * Latest version of Pepper Flash plugin included
+  * Chromium h264ify plugin permissions set correctly by default
+  * Corrections to various MIME types so that files open in sensible default applications
+  * Set default timezone to 'Europe/London'
+  * Linux kernel 4.14.79
+  * Raspberry Pi firmware 12e0bf86e08d6067372bc0a45d7e8a10d3113210
+2018-10-09:
+  * Raspberry Pi 3A+ support
+  * In startup wizard, assign keyboard to country as per Debian installer recommendations
+  * In startup wizard, add option to use US keyboard in preference to country-specific option
+  * In startup wizard, show IP address on first page
+  * In startup wizard, check for existing wifi network connection and show it if there is one
+  * In startup wizard, install language support packages for LibreOffice and other applications
+  * In startup wizard, improve operation with keyboard only and no mouse
+  * Password change in Raspberry Pi Configuration and startup wizard now works properly if passwords contain shell characters
+  * Battery indicator plugin modified to cope with Pi-top hardware monitor crashing
+  * Networking plugin hides wifi password characters by default
+  * In Scratch 2 GPIO plugin, set pin from dropdown list rather than free text
+  * In Scratch 2 SenseHAT plugin, swap x and y axis values for LED array
+  * Include latest Adobe Flash player (31.0.0.108)
+  * Include latest RealVNC Server (6.3.1)
+  * Include libav-tools
+  * Include ssh-import-id
+  * Removed Mathematica
+  * Merge in latest third-party code for Bluetooth ALSA interface
+  * Add ability to prevent software update changing configuration files, by creating ~/.config/.lock file
+  * Various other small bug fixes, tweaks and changes to text
+  * Make dhcpcd work with 3G devices
+  * Add hw acceleration to ffmpeg
+  * Improved WiFi-BT coexistence parameters
+  * Run fake-hwclock before systemd-fsck-root
+  * Raspberry Pi PoE HAT support
+  * Linux kernel 4.14.71
+  * Raspberry Pi firmware 5b49caa17e91d0e64024380119ad739bb201c674
+2018-06-27:
+  * New first-boot configuration wizard added
+  * Recommended Software installer added
+  * Bluej, Greenfoot, NodeRED, Claws Mail, VNC Viewer removed from image - can now be installed from Recommended Applications
+  * Qpdfview PDF viewer installed instead of Xpdf
+  * Version 65.0 of Chromium browser included, with latest Flash player
+  * Volume up / down keys now change by 5% increments and affect currently-selected output device rather than internal device only
+  * Network plugin now remembers previously-entered WiFi network passwords when prompting for reconnection
+  * Serial port and serial console can now be switched separately in Raspberry Pi Configuration
+  * Lxkeymap keyboard language setting application removed - replaced with dialog within Raspberry Pi Configuration
+  * Wifi country and keyboard language setting dialogs in Raspberry Pi Configuration now callable from other applications
+  * New version of Piboto font included to render with correct weight under some rogue applications
+  * Reconnection to Bluetooth audio devices on reboot improved
+  * Disable click-to-rename behaviour in file manager if single-click selection enabled
+  * Appearance Settings dialog makes config changes to some Qt files to match selected theme
+  * MIME file type associations improved
+  * Multiple desktop management options removed from mouse middle-click menu
+  * Menu shortcuts to Raspberry Pi website amended
+  * Python 2 IDLE menu link removed
+  * Sample Magpi PDF installed in /home/pi/MagPi
+  * Various minor tweaks, bug fixes and appearance changes
+  * Bluetooth updates
+    - Firmware with Bluetooth 4.2 features
+    - SCO profile suppot added via bthelper.service
+  * Linux kernel 4.14.50+
+  * Raspberry Pi firmware 748fb17992426bb29d99224b93cb962fefbdc833
+2018-04-18:
   * Fixed race between wifi-country.service and raspberrypi-net-mods.service
   * Linux kernel 4.14.34+
   * Raspberry Pi firmware 5db8e4e1c63178e200d6fbea23ed4a9bf4656658
