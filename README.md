@@ -116,10 +116,28 @@ The following environment variables are supported:
 
     If set, then instead of working through the numeric stages in order, this list will be followed. For example setting to `stage0 stage1 mystage stage2` will run the contents of `mystage` before stage2. An absolute or relative path can be given for stages outside the pi-gen directory.
 
+ * `WPA_ESSID`, `WPA_PASSWORD` and `WPA_COUNTRY` (Default: unset)
+
+   If these are set, they are use to configure `wpa_supplicant.conf`, so that the raspberry pi can automatically connect to a wifi network on first boot.
+
+ * `ENABLE_SSH` (Default: `0`)
+
+   Setting to `1` will enable ssh server for remote log in. Note that if you are using a common password such as the defaults there is a high risk of attackers taking over you RaspberryPi.
+
+ * `STAGE_LIST` (Default: `stage*`)
+
+    If set, then instead of working through the numeric stages in order, this list will be followed. For example setting to `stage0 stage1 mystage stage2` will run the contents of `mystage` before stage2. An absolute or relative path can be given for stages outside the pi-gen directory.
+
 ## A simple example for building Raspbian:
 
 ```bash
 IMG_NAME='Hassbian'
+```
+
+The config file can also be specified on the command line as an argument the `build.sh` or `build-docker.sh` scripts.
+
+```
+./build.sh -c myconfig
 ```
 
 The config file can also be specified on the command line as an argument the `build.sh` or `build-docker.sh` scripts.
