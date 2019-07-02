@@ -46,11 +46,11 @@ EOF
 			SUB_STAGE_QUILT_PATCH_DIR="$(basename "$SUB_STAGE_DIR")-pc"
 			mkdir -p "$SUB_STAGE_QUILT_PATCH_DIR"
 			ln -snf "$SUB_STAGE_QUILT_PATCH_DIR" .pc
+			quilt upgrade
 			if [ -e "${SUB_STAGE_DIR}/${i}-patches/EDIT" ]; then
 				echo "Dropping into bash to edit patches..."
 				bash
 			fi
-			quilt upgrade
 			RC=0
 			quilt push -a || RC=$?
 			case "$RC" in
@@ -197,18 +197,18 @@ source "${SCRIPT_DIR}/common"
 # shellcheck source=scripts/dependencies_check
 source "${SCRIPT_DIR}/dependencies_check"
 
+dependencies_check "${BASE_DIR}/depends"
+
 #check username is valid
 if [[ ! "$FIRST_USER_NAME" =~ ^[a-z][-a-z0-9_]*$ ]]; then
 	echo "Invalid FIRST_USER_NAME: $FIRST_USER_NAME"
 	exit 1
 fi
 
-if [[ -n "${APT_PROXY}" ]] && ! curl --silent ${APT_PROXY} >/dev/null ; then
-	echo "Could not reach APT_PROXY server:" ${APT_PROXY}
+if [[ -n "${APT_PROXY}" ]] && ! curl --silent "${APT_PROXY}" >/dev/null ; then
+	echo "Could not reach APT_PROXY server: ${APT_PROXY}"
 	exit 1
 fi
-
-dependencies_check "${BASE_DIR}/depends"
 
 mkdir -p "${WORK_DIR}"
 log "Begin ${BASE_DIR}"
